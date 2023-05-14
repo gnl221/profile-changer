@@ -15,10 +15,10 @@ public:
     Profile(const QString &name = "", const QString &settingsPath = "");
 
     QString name() const;
-    void setName(const QString &name);
+    void setName(const QString &name) { m_name = name; }
 
     QString settingsPath() const;
-    void setSettingsPath(const QString &settingsPath);
+    void setSettingsPath(const QString &settingsPath) { m_settingsPath = settingsPath; }
 
 private:
     QString m_name;

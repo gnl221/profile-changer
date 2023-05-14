@@ -1,11 +1,9 @@
-//
-// Created by GNL22 on 5/14/2023.
-//
-
 #include "MainWindow.h"
+#include "ui_MainWindow.h"
 
 MainWindow::MainWindow(QWidget *parent)
         : QMainWindow(parent)
+        , ui(new Ui::MainWindow)
 {
     // Initialize GUI components
     // Initialize File Menu
@@ -29,7 +27,21 @@ MainWindow::MainWindow(QWidget *parent)
     launchButton = new QPushButton(tr("Launch"), this);
     updateButton = new QPushButton(tr("Update"), this);
 
+    ui->setupUi(this);
+
+    profileListWidget = new QListWidget(this);
+    mainLayout = new QVBoxLayout; // Initialize the layout
+
+    mainLayout->addWidget(profileListWidget); // Add the list widget to the layout
+
+    // If you have a central widget set in your main window
+    // You will want to set the layout to the central widget
+    QWidget *centralWidget = new QWidget(this);
+    centralWidget->setLayout(mainLayout);
+    this->setCentralWidget(centralWidget);
+
     // Connect slots
+    connect(ui->selectSettingsFileButton, &QPushButton::clicked, this, &MainWindow::selectSettingsFile);
     connect(newProfileAction, &QAction::triggered, this, &MainWindow::newProfile);
     connect(deleteProfileAction, &QAction::triggered, this, &MainWindow::deleteProfile);
     connect(switchThemeAction, &QAction::triggered, this, &MainWindow::switchTheme);
@@ -41,6 +53,7 @@ MainWindow::MainWindow(QWidget *parent)
 
 void MainWindow::newProfile() {
     // Ask the user for the profile name
+    profileListWidget->addItem(newProfile.name());
     bool ok;
     QString text = QInputDialog::getText(this, tr("New Profile"),
                                          tr("Profile name:"), QLineEdit::Normal,
@@ -48,13 +61,13 @@ void MainWindow::newProfile() {
     if (ok && !text.isEmpty()) {
         // Create a new profile
         Profile newProfile;
-        newProfile.name = text;
+        newProfile.setName(text);
 
         // Create a new directory for the profile
         QDir dir;
         QString path = "profiles/" + text; // Modify this path as needed
         if (dir.mkpath(path)) {
-            newProfile.settingsPath = path;
+            newProfile.setSettingsPath(path);
         } else {
             // Handle the error
             QMessageBox::critical(this, tr("Error"), tr("Could not create directory for the new profile."));
@@ -67,13 +80,14 @@ void MainWindow::newProfile() {
 
         // Refresh the profile list in the GUI
         // Assume profileListWidget is a QListWidget member of MainWindow
-        profileListWidget->addItem(newProfile.name);
+        profileListWidget->addItem(newProfile.name());
     }
 }
 
 
 void MainWindow::deleteProfile() {
     // Check if there are profiles to delete
+    delete profileListWidget->takeItem(i);
     if (profiles.empty()) {
         QMessageBox::information(this, tr("Delete Profile"), tr("No profiles to delete."));
         return;

@@ -2,21 +2,50 @@
 // Created by GNL22 on 5/14/2023.
 //
 
-#ifndef PROFILE_CHANGER_MAINWINDOW_H
-#define PROFILE_CHANGER_MAINWINDOW_H
+#ifndef MAINWINDOW_H
+#define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QMessageBox>
+#include <QInputDialog>
+#include <QDir>
+#include <QFile>
+#include <QProcess>
+#include <QFileDialog>
+#include <QAction>
+#include <QMenuBar>
+#include <QLineEdit>
+#include <QPushButton>
+#include <QList>
+#include "Profile.h"
+
+namespace Ui {
+    class MainWindow;
+}
 
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
 
 public:
-    MainWindow(QWidget *parent = nullptr);
+    explicit MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
+
+    // Slots for handling GUI events
+private slots:
+    void newProfile();
+    void deleteProfile();
+    void selectSettingsFile();
+    void selectExecutable();
+    void switchTheme();
+    void launchProfile();
+    void updateProfile();
 
 private:
     // GUI components
+    Ui::MainWindow *ui;
+    QVBoxLayout *mainLayout;
+    QListWidget *profileListWidget;
     QMenu *fileMenu;
     QMenu *settingsMenu;
     QPushButton *launchButton;
@@ -24,18 +53,9 @@ private:
     QLineEdit *profileName;
     QLineEdit *settingsFilePath;
     QLineEdit *executableFilePath;
+    QList<Profile> profiles;
     // Other members to store profiles and their settings
-    ...
 
-    // Slots for handling GUI events
-private slots:
-            void newProfile();
-    void deleteProfile();
-    void selectSettingsFile();
-    void selectExecutable();
-    void switchTheme();
-    void launchProfile();
-    void updateProfile();
 };
 
-#endif //PROFILE_CHANGER_MAINWINDOW_H
+#endif // MAINWINDOW_H
